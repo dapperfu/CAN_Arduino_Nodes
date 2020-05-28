@@ -1,2 +1,3 @@
 # CAN_Arduino_Nodes
-CAN
+
+Extending your CAN data collection with COTS components.
