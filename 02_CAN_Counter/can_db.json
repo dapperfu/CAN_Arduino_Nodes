@@ -1,0 +1,31 @@
+{
+  "messages": [
+    {
+      "id": 2,
+      "is_extended_frame": false,
+      "name": "ArduinoCountingNode",
+      "signals": [
+        {
+          "bit_length": 8,
+          "factor": "1",
+          "is_big_endian": true,
+          "is_float": false,
+          "is_signed": false,
+          "name": "down_counter",
+          "offset": "0",
+          "start_bit": 48
+        },
+        {
+          "bit_length": 8,
+          "factor": "1",
+          "is_big_endian": true,
+          "is_float": false,
+          "is_signed": false,
+          "name": "up_counter",
+          "offset": "0",
+          "start_bit": 56
+        }
+      ]
+    }
+  ]
+}
