@@ -21,9 +21,7 @@ void TaskSendSine(void *pvParameters);
 void TaskSendButtons2(void *pvParameters);
 void TaskSendButtons(void *pvParameters);
 
-void makeNgive(SemaphoreHandle_t semaphore) {
-
-}
+void makeNgive(SemaphoreHandle_t semaphore) {}
 
 // the setup function runs once when you press reset or power the board
 void setup() {
@@ -43,8 +41,6 @@ void setup() {
 
   // Button Set 2
   pinMode(9, INPUT_PULLUP);
-  pinMode(10, INPUT_PULLUP);
-  pinMode(11, INPUT_PULLUP);
   pinMode(12, INPUT_PULLUP);
 
   // initialize serial communication at 115200 bits per second:
@@ -69,33 +65,34 @@ void setup() {
   // Semaphores should only be used whilst the scheduler is running, but we can
   // set it up here.
   if (xSerialSemaphore == NULL) // Check to confirm that the Serial Semaphore
-                         // has not already been created.
+                                // has not already been created.
   {
-    xSerialSemaphore = xSemaphoreCreateMutex(); // Create a mutex semaphore we will use
-                                         // to manage the Serial Port
+    xSerialSemaphore =
+        xSemaphoreCreateMutex(); // Create a mutex semaphore we will use
+                                 // to manage the Serial Port
     if ((xSerialSemaphore) != NULL)
       xSemaphoreGive((xSerialSemaphore)); // Make the Serial Port available for
-                                   // use, by "Giving" the Semaphore.
-  }  if (xCANSemaphore == NULL) // Check to confirm that the Serial Semaphore
-                         // has not already been created.
+                                          // use, by "Giving" the Semaphore.
+  }
+  if (xCANSemaphore == NULL) // Check to confirm that the Serial Semaphore
+                             // has not already been created.
   {
-    xCANSemaphore = xSemaphoreCreateMutex(); // Create a mutex semaphore we will use
-                                         // to manage the Serial Port
+    xCANSemaphore = xSemaphoreCreateMutex(); // Create a mutex semaphore we will
+                                             // use to manage the Serial Port
     if ((xCANSemaphore) != NULL)
       xSemaphoreGive((xCANSemaphore)); // Make the Serial Port available for
-                                   // use, by "Giving" the Semaphore.
+                                       // use, by "Giving" the Semaphore.
   }
 
-
-  //makeNgive(xSerialSemaphore);
-  //makeNgive(xCANSemaphore);
+  // makeNgive(xSerialSemaphore);
+  // makeNgive(xCANSemaphore);
   // Now set up two tasks to run independently.
-  //xTaskCreate(TaskSendCounter, "TaskSendCounter", 128, NULL, 2, NULL);
+  // xTaskCreate(TaskSendCounter, "TaskSendCounter", 128, NULL, 2, NULL);
 
-  //xTaskCreate(TaskSendSine, "TaskSendSine", 128, NULL, 2, NULL);
+  xTaskCreate(TaskSendSine, "TaskSendSine", 128, NULL, 2, NULL);
 
   xTaskCreate(TaskSendButtons, "TaskSendButtons", 128, NULL, 2, NULL);
-  //xTaskCreate(TaskSendButtons2, "TaskSendButtons2", 128, NULL, 2, NULL);
+  xTaskCreate(TaskSendButtons2, "TaskSendButtons2", 128, NULL, 2, NULL);
 }
 
 void loop() {}
@@ -107,13 +104,6 @@ void loop() {}
 void TaskSendSine(void *pvParameters) {
   (void)pvParameters;
 
-  UBaseType_t uxHighWaterMark;
-  byte lowBit;
-  byte highBit;
-
-  /* Inspect our own high water mark on entering the task. */
-  uxHighWaterMark = uxTaskGetStackHighWaterMark(NULL);
-
   byte sndStat;
   byte data[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
@@ -121,12 +111,17 @@ void TaskSendSine(void *pvParameters) {
   xLastWakeTime = xTaskGetTickCount();
 
   for (;;) {
-    uxHighWaterMark = uxTaskGetStackHighWaterMark(NULL);
-    lowBit = uxHighWaterMark & 1;
-    highBit = ((unsigned short)uxHighWaterMark) >> 15;
 
-    data[6] = lowBit;
-    data[7] = highBit;
+    data[0] = lo8(xLastWakeTime);
+    data[1] = hi8(xLastWakeTime);
+
+    data[3] = lo8(xLastWakeTime);
+    data[2] = hi8(xLastWakeTime);
+
+    data[4] += (byte)1;
+    data[5] = (byte)(128 * sin(2 * PI * (float)(data[4]) / (float)(255)) + 128);
+    data[6] =
+        (signed char)(128 * sin(2 * PI * (float)(data[4]) / (float)(255)));
 
     if (xSemaphoreTake(xCANSemaphore, (TickType_t)5) == pdTRUE) {
       sndStat = CAN0.sendMsgBuf(0x250, 0, 8, data);
@@ -144,7 +139,7 @@ void TaskSendSine(void *pvParameters) {
       xSemaphoreGive(xSerialSemaphore);
     }
 
-    vTaskDelayUntil(&xLastWakeTime, 2000 / portTICK_PERIOD_MS);
+    vTaskDelayUntil(&xLastWakeTime, 250 / portTICK_PERIOD_MS);
   }
 }
 
@@ -197,13 +192,10 @@ void TaskSendButtons2(void *pvParameters) {
   xLastWakeTime = xTaskGetTickCount();
 
   for (;;) {
-    data[0] = analogRead(A0);
-    data[1] = analogRead(A1);
-    data[2] = analogRead(A2);
-    data[3] = analogRead(A3);
-    data[4] = analogRead(A4);
-    data[5] = analogRead(A5);
-    data[6]--;
+    // Read each of the
+    data[0] = !(byte)digitalRead(12);
+    data[3] = !(byte)digitalRead(9);
+    // Heartbeat Counter
     data[7]++;
 
     if (xSemaphoreTake(xCANSemaphore, (TickType_t)5) == pdTRUE) {
@@ -214,15 +206,15 @@ void TaskSendButtons2(void *pvParameters) {
     if (xSemaphoreTake(xSerialSemaphore, (TickType_t)5) == pdTRUE) {
       // If the message was sent
       if (sndStat == CAN_OK) {
-        Serial.println("Pass: TaskSendButtons2");
+        Serial.println("Pass: TaskSendButtons");
       } else {
-        Serial.println("Error: TaskSendButtons2");
+        Serial.println("Error: TaskSendButtons");
       }
 
       xSemaphoreGive(xSerialSemaphore);
     }
 
-    vTaskDelayUntil(&xLastWakeTime, 500 / portTICK_PERIOD_MS);
+    vTaskDelayUntil(&xLastWakeTime, 250 / portTICK_PERIOD_MS);
   }
 }
 

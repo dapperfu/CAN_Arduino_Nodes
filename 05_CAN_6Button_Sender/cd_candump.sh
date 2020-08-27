@@ -3,7 +3,6 @@
 while [ 1 ];
 do
 pre-commit run -a;
-platformio run;
-sleep 5;
+platformio run --target upload;
+candump can0;
 done
-
