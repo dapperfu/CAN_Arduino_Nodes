@@ -6,7 +6,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        example: [02_CAN_Counter, 03_CAN_Buttons_Analog, 04_CAN_MultiMessages]
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python
@@ -17,9 +19,7 @@ jobs:
         pip install platformio
     - name: Run PlatformIO
       run: |
-        platformio run --project-dir 02_CAN_Counter/ --environment uno
-        platformio run --project-dir 03_CAN_Buttons_Analog/ --environment uno
-        platformio run --project-dir 04_CAN_MultiMessages/ --environment uno
+        platformio run --project-dir ${{ matrix.example }} --environment uno
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
