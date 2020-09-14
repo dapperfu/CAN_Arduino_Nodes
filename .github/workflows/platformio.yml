@@ -17,3 +17,7 @@ jobs:
         pip install platformio
     - name: Run PlatformIO
       run: platformio run --project-dir 04_CAN_MultiMessages/ --environment uno
+    - uses: actions/upload-artifact@v2
+      with:
+        name: 04-artifacts
+        path: 04_CAN_MultiMessages/.pio/build/uno/firmware.*
