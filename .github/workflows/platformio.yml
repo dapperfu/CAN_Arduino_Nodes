@@ -23,4 +23,4 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: firmware
-        path: */.pio/build/*/firmware.*
+        path: ./*/.pio/build/*/firmware.*
