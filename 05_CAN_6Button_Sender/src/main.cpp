@@ -48,7 +48,7 @@ void setup() {
 
   // Initialize MCP2515 running at 16MHz with a baudrate of 500kb/s and the
   // masks and filters disabled.
-  if (CAN0.begin(MCP_ANY, CAN_500KBPS, MCP_16MHZ) == CAN_OK) {
+  if (CAN0.begin(MCP_ANY, CAN_500KBPS, MCP_8MHZ) == CAN_OK) {
     Serial.println("MCP2515 Initialized Successfully!");
   } else {
     Serial.println("Error Initializing MCP2515...");
@@ -105,26 +105,58 @@ void TaskSendSine(void *pvParameters) {
   (void)pvParameters;
 
   byte sndStat;
-  byte data[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  byte data[3] = {0x00, 0x00, 0x00};
 
   TickType_t xLastWakeTime;
   xLastWakeTime = xTaskGetTickCount();
 
   for (;;) {
-
-    data[0] = lo8(xLastWakeTime);
-    data[1] = hi8(xLastWakeTime);
-
-    data[3] = lo8(xLastWakeTime);
-    data[2] = hi8(xLastWakeTime);
-
-    data[4] += (byte)1;
-    data[5] = (byte)(128 * sin(2 * PI * (float)(data[4]) / (float)(255)) + 128);
-    data[6] =
+    data[0]] += (byte)1;
+    data[1] =
+        (unsigned char)(128 * sin(2 * PI * (float)(data[4]) / (float)(255)) +
+                        128);
+    data[2] =
         (signed char)(128 * sin(2 * PI * (float)(data[4]) / (float)(255)));
 
     if (xSemaphoreTake(xCANSemaphore, (TickType_t)5) == pdTRUE) {
-      sndStat = CAN0.sendMsgBuf(0x250, 0, 8, data);
+      sndStat = CAN0.sendMsgBuf(0x250, 0, 3, data);
+      xSemaphoreGive(xCANSemaphore);
+    }
+
+    if (xSemaphoreTake(xSerialSemaphore, (TickType_t)5) == pdTRUE) {
+      // If the message was sent
+      if (sndStat == CAN_OK) {
+        Serial.println(" Pass: TaskSendSine");
+      } else {
+        Serial.println(" Error: TaskSendSine");
+      }
+
+      xSemaphoreGive(xSerialSemaphore);
+    }
+
+    vTaskDelayUntil(&xLastWakeTime, 250 / portTICK_PERIOD_MS);
+  }
+}
+
+void TaskSendSine2(void *pvParameters) {
+  (void)pvParameters;
+
+  byte sndStat;
+  byte data[3] = {0x00, 0x00, 0x00};
+
+  TickType_t xLastWakeTime;
+  xLastWakeTime = xTaskGetTickCount();
+
+  for (;;) {
+    data[0]] += (byte)1;
+    data[1] =
+        (unsigned char)(128 * sin(2 * PI * (float)(data[4]) / (float)(255)) +
+                        128);
+    data[2] =
+        (signed char)(128 * sin(2 * PI * (float)(data[4]) / (float)(255)));
+
+    if (xSemaphoreTake(xCANSemaphore, (TickType_t)5) == pdTRUE) {
+      sndStat = CAN0.sendMsgBuf(0x275, 0, 3, data);
       xSemaphoreGive(xCANSemaphore);
     }
 
