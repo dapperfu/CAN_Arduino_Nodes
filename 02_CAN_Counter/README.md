@@ -1,4 +1,6 @@
-# 00_Blink
+# **02** CAN Counters
+
+An decrementing and incrementing counter on the 6th and 7th bytes of the CAN message, respectively.
 
 A minimal sketch to check that your toolchain
 
@@ -15,13 +17,10 @@ Monitor the serial output:
 
     pio run -t monitor
 
-The serial terminal should print the value of Analog 0.
-
-The simplest way to validate the setup is to jumper A0 to 5V & Ground.
 
 
-The LED should blink at 0.5 Hz with 50% duty cycle.
+Monitor ```can0``` and decode it with the provided ```.json``` (needs converted to dbc first). 
 
-     pio check; pio run;pio run -t upload; pio run -t monitor
 
-     canconvert can_db.json can_db.dbc; candump can0 | cantools decode can_db.dbc                    1 ↵
+     canconvert can_db.json can_db.dbc
+     cantools monitor --channel can0 can_db.dbc

@@ -1,12 +1,16 @@
 # CAN Arduino Nodes
 
-Simple, low cost add-on node examples to supplement MDF data recorded on a [CSS Electronics CANEdge2](https://www.csselectronics.com/screen/product/can-lin-logger-wifi-canedge2/language/en).
+Simple, examples to supplement MDF data recorded on a [CSS Electronics CANEdge2](https://www.csselectronics.com/screen/product/can-lin-logger-wifi-canedge2/language/en).
 
 Extending your CAN data collection with COTS components:
 
 - Add additional buttons or digital IO.
 - Add analog sensors.
 - Add I^(2)C or SPI devices to the CAN bus.
+
+# Nodes
+
+
 
 # Getting Started:
 

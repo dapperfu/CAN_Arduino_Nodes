@@ -21,8 +21,6 @@ void TaskSendSine(void *pvParameters);
 void TaskSendButtons2(void *pvParameters);
 void TaskSendButtons(void *pvParameters);
 
-void makeNgive(SemaphoreHandle_t semaphore) {}
-
 // the setup function runs once when you press reset or power the board
 void setup() {
 
@@ -84,8 +82,6 @@ void setup() {
                                        // use, by "Giving" the Semaphore.
   }
 
-  // makeNgive(xSerialSemaphore);
-  // makeNgive(xCANSemaphore);
   // Now set up two tasks to run independently.
   // xTaskCreate(TaskSendCounter, "TaskSendCounter", 128, NULL, 2, NULL);
 
@@ -111,7 +107,7 @@ void TaskSendSine(void *pvParameters) {
   xLastWakeTime = xTaskGetTickCount();
 
   for (;;) {
-    data[0]] += (byte)1;
+    data[0] += (byte)1;
     data[1] =
         (unsigned char)(128 * sin(2 * PI * (float)(data[4]) / (float)(255)) +
                         128);
@@ -148,7 +144,7 @@ void TaskSendSine2(void *pvParameters) {
   xLastWakeTime = xTaskGetTickCount();
 
   for (;;) {
-    data[0]] += (byte)1;
+    data[0] += (byte)1;
     data[1] =
         (unsigned char)(128 * sin(2 * PI * (float)(data[4]) / (float)(255)) +
                         128);

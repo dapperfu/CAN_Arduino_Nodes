@@ -32,9 +32,9 @@ void setup() {
               128 // This stack size can be checked & adjusted by reading the
                   // Stack Highwater
               ,
-              NULL, 2 // Priority, with 3 (configMAX_PRIORITIES - 1) being the
-                      // highest, and 0 being the lowest.
-              ,
+              NULL, 
+              2, // Priority, with 3 (configMAX_PRIORITIES - 1) being the
+                 // highest, and 0 being the lowest.
               NULL);
 }
 
@@ -44,7 +44,7 @@ void loop() {}
 /*---------------------- Tasks ---------------------*/
 /*--------------------------------------------------*/
 
-byte data[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF};
+byte data[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 void TaskSend(void *pvParameters) // This is a task.
 {

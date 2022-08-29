@@ -100,12 +100,13 @@ void TaskBlink9(void *pvParameters) {
 
   TickType_t xLastWakeTime;
   bool led_status = true;
-  pinMode(9, OUTPUT);
+  uint8_t pin = 9
+  pinMode(pin, OUTPUT);
   xLastWakeTime = xTaskGetTickCount();
 
   for (;;) // A Task shall never return or exit.
   {
-    digitalWrite(9, led_status);
+    digitalWrite(pin, led_status);
     led_status = !led_status;
     vTaskDelayUntil(&xLastWakeTime,
                     250 / portTICK_PERIOD_MS); // wait for one second

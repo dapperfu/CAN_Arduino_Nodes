@@ -1,9 +1,6 @@
 #include <Arduino.h>
 #include <Arduino_FreeRTOS.h>
 
-#include <SPI.h>
-#include <mcp_can.h>
-
 void TaskBlink(void *pvParameters);
 
 void setup() {
