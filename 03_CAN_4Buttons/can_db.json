@@ -3,7 +3,7 @@
     {
       "id": 3,
       "is_extended_frame": false,
-      "name": "ArduinoButtonNode",
+      "name": "Arduino4ButtonNode",
       "signals": [
         {
           "bit_length": 1,
@@ -11,7 +11,7 @@
           "is_big_endian": true,
           "is_float": false,
           "is_signed": false,
-          "name": "K1",
+          "name": "K4",
           "offset": "0",
           "start_bit": 0
         },
@@ -21,7 +21,7 @@
           "is_big_endian": true,
           "is_float": false,
           "is_signed": false,
-          "name": "K2",
+          "name": "K3",
           "offset": "0",
           "start_bit": 8
         },
@@ -31,7 +31,7 @@
           "is_big_endian": false,
           "is_float": false,
           "is_signed": false,
-          "name": "K3",
+          "name": "K2",
           "offset": "0",
           "start_bit": 16
         },
@@ -41,7 +41,7 @@
           "is_big_endian": false,
           "is_float": false,
           "is_signed": false,
-          "name": "K4",
+          "name": "K1",
           "offset": "0",
           "start_bit": 24
         },
@@ -51,17 +51,7 @@
           "is_big_endian": true,
           "is_float": false,
           "is_signed": false,
-          "name": "Counter",
-          "offset": "0",
-          "start_bit": 48
-        },
-        {
-          "bit_length": 8,
-          "factor": "1",
-          "is_big_endian": true,
-          "is_float": false,
-          "is_signed": false,
-          "name": "Analog0",
+          "name": "Heartbeat",
           "offset": "0",
           "start_bit": 56
         }

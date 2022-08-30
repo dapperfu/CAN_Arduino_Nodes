@@ -10,15 +10,12 @@ void TaskSend(void *pvParameters);
 
 // the setup function runs once when you press reset or power the board
 void setup() {
-  pinMode(7, OUTPUT);
-  digitalWrite(7, LOW);
+  pinMode(2, OUTPUT);
+  digitalWrite(2, LOW);
   pinMode(6, INPUT_PULLUP);
   pinMode(5, INPUT_PULLUP);
   pinMode(4, INPUT_PULLUP);
   pinMode(3, INPUT_PULLUP);
-
-  pinMode(A0, INPUT);
-
   // initialize serial communication at 115200 bits per second:
   Serial.begin(115200);
 
@@ -52,7 +49,7 @@ void loop() {}
 /*---------------------- Tasks ---------------------*/
 /*--------------------------------------------------*/
 
-byte data[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF};
+byte data[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 void TaskSend(void *pvParameters) // This is a task.
 {
@@ -66,14 +63,12 @@ void TaskSend(void *pvParameters) // This is a task.
   for (;;) // A Task shall never return or exit.
   {
     // Read each of the
-    data[0] = (byte)digitalRead(6);
-    data[1] = (byte)digitalRead(5);
-    data[2] = (byte)digitalRead(4);
-    data[3] = (byte)digitalRead(3);
-    // Heartbeat Counter
-    data[6]++;
+    data[0] = !(byte)digitalRead(6);
+    data[1] = !(byte)digitalRead(5);
+    data[2] = !(byte)digitalRead(4);
+    data[3] = !(byte)digitalRead(3);
     // Analog Read.
-    data[7] = (byte)analogRead(A0);
+    data[7]++;
     // Send the data.
     sndStat = CAN0.sendMsgBuf(3, 0, 8, data);
     // If the message was sent
